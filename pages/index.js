@@ -1,36 +1,36 @@
-import { useState, useEffect } from 'react';
-import ScoreCard from '../components/ScoreCard';
+import Head from 'next/head'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
-  const [market, setMarket] = useState('us');
-  const [tab, setTab] = useState('score');
-  const [companies, setCompanies] = useState([]);
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/data?market=${market}`)
+    fetch('/api/data')
       .then(res => res.json())
-      .then(data => setCompanies(data));
-  }, [market]);
+      .then(data => {
+        setStocks(data);
+        setLoading(false);
+      });
+  }, []);
 
   return (
-    <main style={{ backgroundColor: '#111', color: '#fff', minHeight: '100vh', padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Nieminen Score</h1>
-      <div style={{ marginBottom: '1rem' }}>
-        <label>Markkina: </label>
-        <select value={market} onChange={(e) => setMarket(e.target.value)}>
-          <option value="us">Yhdysvallat</option>
-          <option value="eu">Eurooppa</option>
-        </select>
-      </div>
-      <div style={{ marginBottom: '1rem' }}>
-        <button onClick={() => setTab('score')}>Score</button>
-        <button onClick={() => setTab('pe')}>P/E</button>
-        <button onClick={() => setTab('pb')}>P/B</button>
-      </div>
-      <div>
-        {tab === 'score' && companies.map((c, i) => <ScoreCard key={i} company={c} />)}
-        {tab !== 'score' && <p>Tämä näkymä tulossa pian...</p>}
-      </div>
-    </main>
-  );
+    <div style={{ background: '#111', color: '#fff', minHeight: '100vh', padding: '2rem' }}>
+      <Head>
+        <title>Jukkastocks</title>
+      </Head>
+      <h1>Nieminen Score (Live)</h1>
+      {loading ? <p>Loading...</p> : (
+        <ul>
+          {stocks.map((s, i) => (
+            <li key={i}>
+              <strong>{s.ticker}</strong>: {s.score}/20
+              <br />
+              <small>PE: {s.pe}, PB: {s.pb}, Yield: {s.dividendYield}%</small>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
 }

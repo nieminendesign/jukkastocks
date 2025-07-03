@@ -1,34 +1,32 @@
-export default function handler(req, res) {
-  const mockData = [
-    { name: "LVMH", ticker: "MC.PA", pe: 22, pb: 5, roe: 0.24, div: 0.015, rating: "buy" },
-    { name: "Novo Nordisk", ticker: "NOVO-B.CO", pe: 30, pb: 18, roe: 0.70, div: 0.02, rating: "hold" },
-    { name: "Lam Research", ticker: "LRCX", pe: 19, pb: 6, roe: 0.45, div: 0.017, rating: "buy" }
-  ];
 
-  const scored = mockData.map((c) => {
-    let score = 0;
-    if (c.pb < 5) score += 5;
-    else if (c.pb < 10) score += 3;
-    else score += 1;
+export default async function handler(req, res) {
+  const tickers = ['AAPL', 'MSFT', 'GOOGL'];
+  const key = 'VqrBS5P1n3fMGjXetSiiPTMBRSZeNW2I';
 
-    if (c.roe > 0.5) score += 5;
-    else if (c.roe > 0.3) score += 3;
-    else score += 1;
+  const results = await Promise.all(tickers.map(async (ticker) => {
+    const finUrl = `https://api.polygon.io/v2/reference/financials?ticker=${ticker}&limit=1&apiKey=${key}`;
 
-    if (c.div > 0.015) score += 3;
-    else if (c.div > 0.005) score += 2;
-    else score += 1;
+    const fin = await fetch(finUrl).then(r => r.json());
 
-    if (c.rating === 'buy') score += 2;
-    else if (c.rating === 'hold') score -= 1;
-    else score -= 2;
+    const metrics = fin.results?.[0]?.metrics || {};
 
-    let profile = 'tasapainoinen';
-    if (c.pb > 10 && c.roe > 0.4) profile = 'kasvu';
-    else if (c.pb < 5 && c.roe < 0.3) profile = 'arvo';
+    const pe = parseFloat(metrics.pe_ratio) || 0;
+    const pb = parseFloat(metrics.pb_ratio) || 0;
+    const dividendYield = parseFloat(metrics.dividend_yield) || 0;
 
-    return { ...c, score, profile };
-  });
+    const score =
+      (pb < 3 ? 5 : pb < 5 ? 4 : 2) +
+      (dividendYield > 2 ? 5 : dividendYield > 1 ? 3 : 1) +
+      (pe < 20 ? 4 : pe < 30 ? 3 : 1);
 
-  res.status(200).json(scored);
+    return {
+      ticker,
+      pe,
+      pb,
+      dividendYield,
+      score
+    };
+  }));
+
+  res.status(200).json(results);
 }
