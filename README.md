@@ -1,3 +1,3 @@
 # Jukkastocks
 
-Next.js-pohjainen sijoitussivusto Nieminen Score -periaatteella.
+Live Nieminen Score -data + tooltip.
