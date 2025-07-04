@@ -1,27 +1,42 @@
+
 export default async function handler(req, res) {
-  const tickers = ['AAPL', 'MSFT', 'NVDA'];
-  const key = 'VqrBS5P1n3fMGjXetSiiPTMBRSZeNW2I';
+  const key = 'azObx60SF5un3u1PrxdLGnXh0rdVWb5M';
+  const symbol = req.query.ticker || 'AAPL';
 
-  const results = await Promise.all(tickers.map(async (ticker) => {
-    try {
-      const finUrl = `https://api.polygon.io/v2/reference/financials?ticker=${ticker}&limit=1&apiKey=${key}`;
-      const fin = await fetch(finUrl).then(r => r.json());
+  try {
+    const profileRes = await fetch(`https://financialmodelingprep.com/api/v3/profile/${symbol}?apikey=${key}`);
+    const quoteRes = await fetch(`https://financialmodelingprep.com/api/v3/ratios-ttm/${symbol}?apikey=${key}`);
+    const ratingRes = await fetch(`https://financialmodelingprep.com/api/v4/analyst-estimates?symbol=${symbol}&apikey=${key}`);
 
-      const metrics = fin.results?.[0]?.metrics || {};
-      const pe = parseFloat(metrics.pe_ratio) || 0;
-      const pb = parseFloat(metrics.pb_ratio) || 0;
-      const dividendYield = parseFloat(metrics.dividend_yield) || 0;
+    const profile = await profileRes.json();
+    const quote = await quoteRes.json();
+    const rating = await ratingRes.json();
 
-      const score =
-        (pb < 3 ? 5 : pb < 5 ? 4 : 2) +
-        (dividendYield > 2 ? 5 : dividendYield > 1 ? 3 : 1) +
-        (pe < 20 ? 4 : pe < 30 ? 3 : 1);
+    const pe = parseFloat(quote[0]?.peRatioTTM) || 0;
+    const pb = parseFloat(quote[0]?.priceToBookRatioTTM) || 0;
+    const dividendYield = parseFloat(quote[0]?.dividendYielTTM) || 0;
+    const roe = parseFloat(quote[0]?.returnOnEquityTTM) * 100 || 0;
 
-      return { ticker, pe, pb, dividendYield, score };
-    } catch (error) {
-      return { ticker, pe: 0, pb: 0, dividendYield: 0, score: 0, error: true };
-    }
-  }));
+    const analystAvg = parseFloat(rating[0]?.ratingAverage) || 0;
+    const analystScore = analystAvg >= 4.5 ? 2 : analystAvg >= 3.5 ? 1 : 0;
 
-  res.status(200).json(results);
+    let score = 0;
+    score += pb < 1.5 ? 5 : pb < 3 ? 4 : pb < 5 ? 3 : pb < 8 ? 2 : 1;
+    score += roe > 25 ? 5 : roe > 15 ? 4 : roe > 10 ? 3 : roe > 5 ? 2 : 1;
+    score += dividendYield > 4 ? 4 : dividendYield > 2 ? 3 : dividendYield > 1 ? 2 : dividendYield > 0 ? 1 : 0;
+    score += pe < 15 ? 3 : pe < 25 ? 2 : pe < 35 ? 1 : 0;
+    score += analystScore;
+
+    res.status(200).json({
+      symbol,
+      pe,
+      pb,
+      dividendYield,
+      roe,
+      analystScore,
+      score
+    });
+  } catch (error) {
+    res.status(200).json({ symbol, error: true, score: 0 });
+  }
 }
