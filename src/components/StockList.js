@@ -1,1 +1,0 @@
-// Listausyhtiöt ja Nieminen Score

@@ -1,1 +1,0 @@
-// Nieminen Score -dialogi

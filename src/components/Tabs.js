@@ -1,1 +1,0 @@
-// Tabs: USA, Eurooppa, Score-haku

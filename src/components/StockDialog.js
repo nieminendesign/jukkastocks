@@ -1,1 +1,0 @@
-// Yhtiökohtainen dialogi graafeineen
