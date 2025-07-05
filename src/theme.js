@@ -1,0 +1,1 @@
+// MUI synthwave dark theme

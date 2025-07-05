@@ -1,3 +1,2 @@
 # Jukkastocks
-
-Live Nieminen Score -data + tooltip.
+Tämä versio sisältää täyden Nieminen Score -laskennan, MUI UI:n ja live-datan.
