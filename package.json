@@ -1,14 +1,14 @@
 {
-  "name": "jukkastocks",
-  "version": "0.1.0",
+  "name": "jukkastocks-ultimate",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@mui/material": "^5.15.0",
     "@mui/icons-material": "^5.15.0",
+    "recharts": "^2.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "recharts": "^2.8.0"
+    "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

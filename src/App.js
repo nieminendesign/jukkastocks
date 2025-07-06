@@ -1,11 +1,29 @@
-import React from 'react';
+import React from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import Dashboard from "./components/Dashboard";
+
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: { main: "#ff4081" },
+    secondary: { main: "#00e5ff" },
+    background: {
+      default: "#121212",
+      paper: "#1e1e1e",
+    },
+  },
+  typography: {
+    fontFamily: "'Roboto', sans-serif",
+  },
+});
 
 function App() {
   return (
-    <div style={{ color: 'white', background: '#121212', minHeight: '100vh', padding: 32 }}>
-      <h1>Jukkastocks</h1>
-      <p>Tämä on Nieminen Score -sijoituspalvelun perusrunko.</p>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Dashboard />
+    </ThemeProvider>
   );
 }
 

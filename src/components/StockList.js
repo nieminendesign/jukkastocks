@@ -1,1 +1,1 @@
-// Listaus Nieminen Scorella
+// Stock list with Nieminen Score

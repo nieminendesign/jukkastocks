@@ -1,1 +1,1 @@
-// Dialogi: tunnusluvut ja graafi
+// Dialog with financial details + graph

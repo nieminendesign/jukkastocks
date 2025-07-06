@@ -1,1 +1,1 @@
-// Dialogi: miten Nieminen Score lasketaan
+// How Nieminen Score is calculated

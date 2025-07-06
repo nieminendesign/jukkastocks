@@ -1,1 +1,1 @@
-// Nieminen Score -logiikka
+// Full Nieminen Score logic (PE, PB, ROE, Yield, Trend etc.)

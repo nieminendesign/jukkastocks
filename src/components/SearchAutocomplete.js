@@ -1,1 +1,1 @@
-// Autocomplete-tickerihaku ja localStorage-historia
+// Autocomplete + localStorage history
