@@ -1,0 +1,1 @@
+// Synthwave tumma teema (Material UI)
